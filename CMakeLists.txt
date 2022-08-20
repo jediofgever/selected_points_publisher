@@ -1,34 +1,72 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(selected_points_publisher)
-find_package(catkin REQUIRED COMPONENTS rviz)
-catkin_package()
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets Quick)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+
+find_package(ament_cmake REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Test Concurrent)
+find_package(rviz_common REQUIRED)
+find_package(rviz_default_plugins REQUIRED)
+find_package(rviz_ogre_vendor REQUIRED)
+find_package(rviz_rendering REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+
 set(QT_LIBRARIES Qt5::Widgets)
+
+include_directories(include)
 qt5_wrap_cpp(MOC_FILES
   include/selected_points_publisher/selected_points_publisher.hpp
-  )
-add_definitions(-DQT_NO_KEYWORDS)
+)
 
-add_library(${PROJECT_NAME}
+set(dependencies
+geometry_msgs
+pluginlib
+Qt5
+rclcpp
+rviz_common
+rviz_default_plugins
+rviz_ogre_vendor
+rviz_rendering
+)
+
+add_library(${PROJECT_NAME} SHARED
   src/selected_points_publisher.cpp
   ${MOC_FILES}
-  )
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
 
 target_link_libraries(${PROJECT_NAME}
-  ${QT_LIBRARIES}
-  ${catkin_LIBRARIES}
-  )
+  rviz_common::rviz_common
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+pluginlib_export_plugin_description_file(rviz_common plugin_description.xml)
 
 install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  )
+        EXPORT ${PROJECT_NAME}   
+ARCHIVE DESTINATION lib
+LIBRARY DESTINATION lib
+RUNTIME DESTINATION bin
+INCLUDES DESTINATION include
+)
 
-install(FILES
-  plugin_description.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(
+  DIRECTORY include/
+  DESTINATION include/
+)     
+
+ament_export_include_directories(include)
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
+
+ament_package()

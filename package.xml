@@ -1,18 +1,22 @@
-<?xml version="0.1.0"?>
-<package>
-  <name>selected_points_publisher</name>
-  <version>0.1.0</version>
-  <description>RViz plugin to select points and publish them in a new topic.</description>
-  <maintainer  email="david.wong@tier4.jp">David Wong</maintainer>
-  <license>Apache 2</license>
-  <author email="david.wong@tier4.jp">David Wong</author>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>selected_points_publisher</name>
+    <version>0.0.0</version>
+    <description>RViz plugin to select points and publish them in a new topic.</description>
+    <maintainer  email="david.wong@tier4.jp">David Wong</maintainer>
+    <author email="david.wong@tier4.jp">David Wong</author>
+    <author email="fetullah.atas@nmbu.no">Fetullah Atas</author>
+    <license>Apache-2.0</license>
+    <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>rviz</build_depend>
-
-  <run_depend>rviz</run_depend>
-
-  <export>
-      <rviz plugin="${prefix}/plugin_description.xml"/>
-  </export>
+    <depend>ament_cmake</depend>
+    <depend>rclcpp</depend>
+    <depend>rviz2</depend>
+  
+    <test_depend>ament_lint_common</test_depend>
+    <test_depend>ament_lint_auto</test_depend>
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
 </package>
