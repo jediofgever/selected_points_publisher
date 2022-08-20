@@ -31,6 +31,10 @@ namespace rviz_plugin_selected_points_publisher
     rviz_selected_publisher_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
       rviz_cloud_topic_, rclcpp::SystemDefaultsQoS());
     num_selected_points_ = 0;
+    
+    RCLCPP_INFO(
+      node_->get_logger(),
+      "SelectedPointsPublisher:: Started");
   }
 
   SelectedPointsPublisher::~SelectedPointsPublisher()
@@ -42,7 +46,7 @@ namespace rviz_plugin_selected_points_publisher
   {
     if (event->type() == QKeyEvent::KeyPress) {
       if (event->key() == 'c' || event->key() == 'C') {
-        RCLCPP_INFO_STREAM(
+        RCLCPP_INFO(
           node_->get_logger(),
           "SelectedPointsPublisher::processKeyEvent Cleaning previous selection (selected area "
           "and points).");
@@ -61,12 +65,14 @@ namespace rviz_plugin_selected_points_publisher
         marker.lifetime = rclcpp::Duration::from_seconds(0);
         num_selected_points_ = 0;
       } else if (event->key() == 'p' || event->key() == 'P') {
-        RCLCPP_INFO_STREAM(
+        RCLCPP_INFO(
           node_->get_logger(),
           "SelectedPointsPublisher.updateTopic selected points to topic ");
         rviz_selected_publisher_->publish(selected_points_);
       }
     }
+
+    return 0;
   }
 
   int SelectedPointsPublisher::processMouseEvent(rviz_common::ViewportMouseEvent & event)
@@ -169,4 +175,6 @@ namespace rviz_plugin_selected_points_publisher
 }  // namespace rviz_plugin_selected_points_publisher
 
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(rviz_plugin_selected_points_publisher::SelectedPointsPublisher, rviz_common::Tool)
+PLUGINLIB_EXPORT_CLASS(
+  rviz_plugin_selected_points_publisher::SelectedPointsPublisher,
+  rviz_common::Tool)
