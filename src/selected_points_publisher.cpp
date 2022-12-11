@@ -31,7 +31,7 @@ namespace rviz_plugin_selected_points_publisher
     rviz_selected_publisher_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
       rviz_cloud_topic_, rclcpp::SystemDefaultsQoS());
     num_selected_points_ = 0;
-    
+
     RCLCPP_INFO(
       node_->get_logger(),
       "SelectedPointsPublisher:: Started");
@@ -102,10 +102,10 @@ namespace rviz_plugin_selected_points_publisher
 
     selected_points_.header.frame_id = context_->getFixedFrame().toStdString();
     selected_points_.height = 1;
-    selected_points_.point_step = 4 * 4;
+    selected_points_.point_step = 4 * 3;
     selected_points_.is_dense = false;
     selected_points_.is_bigendian = false;
-    selected_points_.fields.resize(4);
+    selected_points_.fields.resize(3);
 
     selected_points_.fields[0].name = "x";
     selected_points_.fields[0].offset = 0;
@@ -121,11 +121,6 @@ namespace rviz_plugin_selected_points_publisher
     selected_points_.fields[2].offset = 8;
     selected_points_.fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
     selected_points_.fields[2].count = 1;
-
-    selected_points_.fields[3].name = "intensity";
-    selected_points_.fields[3].offset = 12;
-    selected_points_.fields[3].datatype = sensor_msgs::msg::PointField::FLOAT32;
-    selected_points_.fields[3].count = 1;
 
     int i = 0;
     while (model->hasIndex(i, 0)) {
@@ -146,21 +141,6 @@ namespace rviz_plugin_selected_points_publisher
       *(float *)data_pointer = point_data.z;
       data_pointer += 4;
 
-      // Search for the intensity value
-      for (int j = 1; j < child->numChildren(); j++) {
-        rviz_common::properties::Property * grandchild = child->childAt(j);
-        QString nameOfChild = grandchild->getName();
-        QString nameOfIntensity("intensity");
-
-        if (nameOfChild.contains(nameOfIntensity)) {
-          rviz_common::properties::FloatProperty * floatchild =
-            (rviz_common::properties::FloatProperty *)grandchild;
-          float intensity = floatchild->getValue().toFloat();
-          *(float *)data_pointer = intensity;
-          break;
-        }
-      }
-      data_pointer += 4;
       i++;
     }
     num_selected_points_ = i;

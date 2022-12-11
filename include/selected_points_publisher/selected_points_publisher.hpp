@@ -46,38 +46,40 @@
 #include "rviz_common/view_manager.hpp"
 #include "rviz_common/view_controller.hpp"
 #include <QVariant>
+#include <QKeyEvent>
 
 namespace rviz_plugin_selected_points_publisher
 {
-class SelectedPointsPublisher;
+  class SelectedPointsPublisher;
 
-class SelectedPointsPublisher : public rviz_default_plugins::tools::SelectionTool
-{
-  Q_OBJECT
-public:
-  SelectedPointsPublisher();
-  virtual ~SelectedPointsPublisher();
-  virtual int processMouseEvent(rviz_common::ViewportMouseEvent& event);
-  virtual int processKeyEvent(QKeyEvent* event, rviz_common::RenderPanel* panel);
+  class SelectedPointsPublisher : public rviz_default_plugins::tools::SelectionTool
+  {
+    Q_OBJECT
 
-public Q_SLOTS:
- 
-protected:
-  int processSelectedArea();
+  public:
+    SelectedPointsPublisher();
+    virtual ~SelectedPointsPublisher();
+    virtual int processMouseEvent(rviz_common::ViewportMouseEvent & event);
+    virtual int processKeyEvent(QKeyEvent * event, rviz_common::RenderPanel * panel);
 
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr rviz_selected_publisher_;
-  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_subscriber_;
+  public Q_SLOTS:
 
-  std::string tf_frame_;
-  std::string rviz_cloud_topic_;
-  std::string subscribed_cloud_topic_;
+  protected:
+    int processSelectedArea();
 
-  sensor_msgs::msg::PointCloud2 selected_points_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr rviz_selected_publisher_;
+    rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_subscriber_;
 
-  bool selecting_;
-  int num_selected_points_;
-};
+    std::string tf_frame_;
+    std::string rviz_cloud_topic_;
+    std::string subscribed_cloud_topic_;
+
+    sensor_msgs::msg::PointCloud2 selected_points_;
+
+    bool selecting_;
+    int num_selected_points_;
+  };
 }  // namespace rviz_plugin_selected_points_publisher
 
 #endif  // SELECTED_POINTS_PUBLISHER_HPP
